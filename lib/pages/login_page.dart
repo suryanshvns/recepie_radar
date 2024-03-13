@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:recepie_radar/services/auth_service.dart';
+import 'package:status_alert/status_alert.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -129,9 +131,22 @@ class _LoginPageState extends State<LoginPage> {
         width: MediaQuery.of(context).size.width * 0.45,
         height: MediaQuery.of(context).size.height * 0.06,
         child: ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             if (_loginFormKey.currentState?.validate() ?? false) {
               _loginFormKey.currentState?.save();
+              bool result = await AuthService().login(username!, password!);
+              if (result) {
+                Navigator.pushReplacementNamed(context, "/home");
+              } else {
+                StatusAlert.show(
+                  context,
+                  duration: const Duration(seconds: 2),
+                  title: "Login Failed",
+                  subtitle: "Please try again",
+                  configuration: IconConfiguration(icon: Icons.error),
+                  maxWidth: 260,
+                );
+              }
             }
           },
           style: ElevatedButton.styleFrom(
